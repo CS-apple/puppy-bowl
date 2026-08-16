@@ -16,6 +16,7 @@ async function getPups(){
     const json = await response.json();
     PUPS = json.data
     console.log(PUPS);
+    render()
     }catch(err){
         console.log(err)
     }
@@ -30,6 +31,7 @@ async function getPup(id){
         render()
     }catch(err){
         console.log(err)
+
     }
 }
 ///display names of players via API 
@@ -61,14 +63,15 @@ async function addPupToApi(pup){
     try{
     const response = await fetch(API + '/players', {
         method: "POST",
-        headers: {"ContentType": "application/json"},
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify(pup),
     });
     const json = await response.json();
-    console.log("data", json.data)
-    if(response === 201){
+    // console.log("data", json.data)
+    // console.log(response)
+    if (response.status === 200){
         getPups()
-        render()
+        // console.log("get pup")
     }else{
         console.log(response)
     }; 
@@ -101,7 +104,7 @@ function addNewPupForm(){
     const name = data.get('name');
     const breed = data.get('breed')
     const img = data.get('imageUrl');
-    console.log(name+ breed+img)
+    console.log(name+ breed+img )
     addPupToApi({name, breed, img});
 
   })
@@ -140,7 +143,17 @@ if(!selectedPup){
 }
 
 //remove pup from pupinfo
-function removePup(id){
+async function removePup(id){
+    try{
+    const response = await fetch (API+ '/players/'+ id, {
+        method: "DELETE",
+    })
+        if (response.status === 200){
+            getPups()
+        }
+    }catch(error){
+        console.log(error)
+    }
 
 }
 
